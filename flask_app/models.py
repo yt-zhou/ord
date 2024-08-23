@@ -13,7 +13,7 @@ def get_mysql_connection():
         host="localhost",
         user=os.getenv('MYSQL_USER'),
         password=os.getenv('MYSQL_PASSWORD'),
-        database="HcTai"
+        database=os.getenv('MYSQL_DB')
     )
     return conn
 
@@ -24,8 +24,8 @@ def get_local_mongo_connection():
                          tlsAllowInvalidCertificates=True,
                          username=os.getenv('MONGO_LOCAL_USER'),
                          password=os.getenv('MONGO_LOCAL_PASSWORD'),
-                         authSource='HcTai')
-    db = client['HcTai']  
+                         authSource=os.getenv('MONGO_LOCAL_DB'))
+    db = client[os.getenv('MONGO_LOCAL_DB')]  
     print("Connected to MongoDB with SSL...")
     return db
 
@@ -36,8 +36,8 @@ def get_master_mongo_connection():
                          tlsAllowInvalidCertificates=True,
                          username=os.getenv('MONGO_MASTER_USER'),
                          password=os.getenv('MONGO_MASTER_PASSWORD'),
-                         authSource='HcTaiMaster')
-    db = client['HcTaiMaster']  
+                         authSource=os.getenv('MONGO_MASTER_DB'))
+    db = client[os.getenv('MONGO_MASTER_DB')]  
     print("Connected to Master MongoDB with SSL...")
     return db
 
