@@ -1,10 +1,20 @@
 # Orchestrated Reporting Dashboard
+## Background
+This project is created during the 2024 mPulse Innovation Day. It is designed to enhance data-driven decision-making by providing powerful and user-friendly data visualization tools
 
+### For mPulse:
+- Reduce turnaround time for basic data pull and analytics requests.
+- Provide clear and engaging visuals for client meetings, presentations, and demos.
+- Explore new upsell opportunities through advanced data insights.
+
+### For Clients:
+- Streamlined processes for quicker access to critical insights.
+- Empower clients with intuitive tools to visualize and act on their data effectively.
+
+## Setup
 This project includes two components:
 - Flask Application: Backend logic.
 - Streamlit Application: Data dashboard.
-
-## Setup
 
 1. **Fork and Clone the Repository**
 ```bash
@@ -20,8 +30,7 @@ This project includes two components:
 
 3. **Install Dependencies**
 ```bash
-   pip install -r flask_app/requirements.txt
-   pip install -r streamlit_app/requirements.txt
+   pip install -r requirements.txt
 ```
 ## Running the Applications
 
