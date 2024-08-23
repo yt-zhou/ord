@@ -3,97 +3,12 @@ import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Set page configuration - this must be the first Streamlit command
+# Set page configuration
 st.set_page_config(layout="wide", page_title="Reporting Dashboard")
 
-# Custom CSS for styling based on the provided design
-st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Mulish:wght@300;600&display=swap');
-
-    /* Set background */
-    .reportview-container, .main {
-        background-color: #f8f9fa;
-        padding: 20px;
-        font-family: 'Mulish', sans-serif;
-    }
-
-    /* Dashboard header */
-    .dashboard-header {
-        display: flex;
-        align-items: center;
-        background-color: #ffffff;
-        padding: 20px;
-        margin-bottom: 20px;
-        border-bottom: 1px solid #ddd;
-        position: relative;
-        width: 100%;
-    }
-    .logo {
-        width: 50px;
-        height: auto;
-        margin-right: 20px;
-    }
-    .title {
-        font-size: 36px;
-        text-align: left;
-        color: #212529;
-        font-weight: bold;
-        margin: 0;
-        font-family: 'Mulish SemiBold', sans-serif;
-    }
-
-    /* Stat cards */
-    .stat-card {
-        background-color: #ffffff;
-        padding: 20px;
-        border-radius: 10px;
-        border: 1px solid #ddd;
-        text-align: center;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        font-family: 'Mulish Light', sans-serif;
-        position: relative;
-        margin: 0 10px;
-    }
-    .stat-title {
-        font-size: 14px;
-        color: #666;
-        text-transform: uppercase;
-        font-weight: 600;
-        margin-bottom: 10px;
-    }
-    .stat-value {
-        font-size: 36px;
-        font-weight: bold;
-        color: #333;
-        margin-bottom: 10px;
-    }
-
-    /* Chart container */
-    .chart-container {
-        padding: 20px;
-        background-color: #ffffff;
-        border-radius: 10px;
-        border: 1px solid #ddd;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-    }
-    .chart-title {
-        font-size: 20px;
-        font-weight: 600;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
 # Dashboard header with logo and title
-st.markdown('''
-    <div class="dashboard-header">
-        <img src="/home/parallels/ord/streamlit_app/logo.png" class="logo">  <!-- Replace with your logo's path -->
-        <h1 class="title">Reporting Dashboard</h1>
-    </div>
-''', unsafe_allow_html=True)
+st.image("/home/parallels/ord/streamlit_app/logo.png", width=60)  # Replace with your logo path
+st.title("Reporting Dashboard")
 
 # Helper function to fetch data from Flask API
 def fetch_data(api_url, params=None):
@@ -129,28 +44,13 @@ replied_targets = reply_rate_data.get('replied_targets', 0)
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.markdown('''
-    <div class="stat-card">
-        <div class="stat-title">Total Messages Sent</div>
-        <div class="stat-value">{} </div>
-    </div>
-    '''.format(total_messages), unsafe_allow_html=True)
+    st.metric(label="Total Messages Sent", value=f"{total_messages:,}")
 
 with col2:
-    st.markdown('''
-    <div class="stat-card">
-        <div class="stat-title">Active Campaigns</div>
-        <div class="stat-value">{} </div>
-    </div>
-    '''.format(len(campaign_data)), unsafe_allow_html=True)
+    st.metric(label="Active Campaigns", value=f"{len(campaign_data)}")
 
 with col3:
-    st.markdown('''
-    <div class="stat-card">
-        <div class="stat-title">Replied Targets</div>
-        <div class="stat-value">{} </div>
-    </div>
-    '''.format(replied_targets), unsafe_allow_html=True)
+    st.metric(label="Replied Targets", value=f"{replied_targets:,}")
 
 # Combine data into a single DataFrame for visualization
 if campaign_data and member_count_data:
@@ -165,8 +65,7 @@ if campaign_data and member_count_data:
     col4, col5 = st.columns(2)
 
     with col4:
-        st.markdown('<div class="chart-container">', unsafe_allow_html=True)
-        st.markdown('<h2 class="chart-title">Enrollment Per Campaign</h2>', unsafe_allow_html=True)
+        st.subheader("Enrollment Per Campaign")
 
         fig, ax = plt.subplots(figsize=(10, 6))
         bars = ax.barh(combined_df["Campaign Name"], combined_df["Member Count"], color='#1f77b4')
@@ -176,34 +75,33 @@ if campaign_data and member_count_data:
         ax.spines['right'].set_visible(False)
         ax.spines['left'].set_color('#d1d1d1')
         ax.spines['bottom'].set_color('#d1d1d1')
-        ax.tick_params(colors='#343a40', which='both')
-        ax.set_facecolor('#f8f9fa')
-        fig.patch.set_facecolor('#f8f9fa')
+        ax.tick_params(colors='#d1d1d1', which='both')
+        ax.set_facecolor('#1e1e1e')
+        fig.patch.set_facecolor('#1e1e1e')
 
         # Add value labels on the bars
         for bar in bars:
             ax.text(bar.get_width() + 5, bar.get_y() + bar.get_height() / 2,
-                    f'{bar.get_width():,.0f}', va='center', ha='left', color='#343a40')
+                    f'{bar.get_width():,.0f}', va='center', ha='left', color='#d1d1d1')
 
-        # If campaign names are long, rotate them
-        plt.xticks(rotation=45, ha='right')
+        # Rotate x-axis labels if they are too long
+        plt.xticks(rotation=45, ha='right', color='#d1d1d1')
+        plt.yticks(color='#d1d1d1')
         st.pyplot(fig)
-        st.markdown('</div>', unsafe_allow_html=True)
 
     with col5:
-        st.markdown('<div class="chart-container">', unsafe_allow_html=True)
-        st.markdown('<h2 class="chart-title">Reply Rate Analysis</h2>', unsafe_allow_html=True)
+        st.subheader("Reply Rate Analysis")
 
         labels = ['Replied', 'Did Not Reply']
         sizes = [replied_targets, total_unique_targets - replied_targets]
-        colors = ['#4CAF50', '#FF6F61']
+        colors = ['#1f77b4', '#4f9bd2']
 
         fig1, ax1 = plt.subplots(figsize=(8, 6))
-        ax1.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
+        ax1.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140, textprops={'color': '#d1d1d1'})
         ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+        fig1.patch.set_facecolor('#1e1e1e')
 
         st.pyplot(fig1)
-        st.markdown('</div>', unsafe_allow_html=True)
 
 else:
     st.warning("No data available to display the chart.")
