@@ -1,54 +1,45 @@
-# models.py
-
 import mysql.connector
+from dotenv import load_dotenv
 from pymongo import MongoClient
 import ssl
+import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 # MySQL connection
 def get_mysql_connection():
     conn = mysql.connector.connect(
         host="localhost",
-        user="", #insert user here
-        password="", #insert password here
+        user=os.getenv('MYSQL_USER'),
+        password=os.getenv('MYSQL_PASSWORD'),
         database="HcTai"
     )
     return conn
 
 # Local MongoDB connection
 def get_local_mongo_connection():
-
     client = MongoClient('localhost:27017',
                          tls=True,
                          tlsAllowInvalidCertificates=True,
-                         username = '', #insert user here
-                         password = '', #insert password here
-                         authSource = 'HcTai')
-    
-    
+                         username=os.getenv('MONGO_LOCAL_USER'),
+                         password=os.getenv('MONGO_LOCAL_PASSWORD'),
+                         authSource='HcTai')
     db = client['HcTai']  
-
     print("Connected to MongoDB with SSL...")
-
     return db
-
 
 # Master MongoDB connection
 def get_master_mongo_connection():
-
     client = MongoClient('localhost:27017',
                          tls=True,
                          tlsAllowInvalidCertificates=True,
-                         username = '', #insert user here
-                         password = '', #insert password here
-                         authSource = 'HcTaiMaster')
-    
-    
+                         username=os.getenv('MONGO_MASTER_USER'),
+                         password=os.getenv('MONGO_MASTER_PASSWORD'),
+                         authSource='HcTaiMaster')
     db = client['HcTaiMaster']  
-
     print("Connected to Master MongoDB with SSL...")
-
     return db
-
 
 # Test MySQL connection
 def test_mysql_connection():
@@ -68,8 +59,7 @@ def test_mysql_connection():
 # Test MongoDB connection
 def test_mongo_connection():
     try:
-        db = get_mongo_connection()
-        # Just list the collections to see if the connection works
+        db = get_local_mongo_connection()  # Changed to get_local_mongo_connection
         collections = db.list_collection_names()
         if collections:
             print("MongoDB connection is successful. Collections:", collections)
@@ -78,3 +68,6 @@ def test_mongo_connection():
     except Exception as err:
         print(f"MongoDB error: {err}")
 
+if __name__ == "__main__":
+    test_mysql_connection()
+    test_mongo_connection()
